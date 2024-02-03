@@ -110,7 +110,16 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        try {
+            return response()->json([
+                'result' => $user->load([
+                    'admin',
+                    'employee',
+                ]),
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
