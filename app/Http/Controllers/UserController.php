@@ -126,6 +126,23 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        try {
+            if ($user->delete()) {
+                $result = $user;
+                $msg = Str::ucfirst(__('user was successfully deleted'));
+                $status = 200;
+            } else {
+                $result = null;
+                $msg = Str::ucfirst(__('user was not successfully deleted'));
+                $status = 500;
+            }
+            return response()->json([
+                'result' => $result,
+                'msg' => $msg,
+                'status' => $status,
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }
