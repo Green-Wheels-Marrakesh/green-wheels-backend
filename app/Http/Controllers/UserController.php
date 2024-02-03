@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\Models\Person;
 use App\Models\User;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -19,9 +20,25 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            $users = User::when($request->role, function (Builder $query, string $role) {
+                $role = RoleEnum::from($role);
+                if (RoleEnum::ADMIN()->equals($role)) {
+                    $relation = 'admin';
+                } elseif (RoleEnum::EMPLOYEE()->equals($role)) {
+                    $relation = 'employee';
+                }
+                $query->has($relation)->with($relation);;
+            })
+            ->get();
+            return response()->json([
+                'result' => $users,
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
