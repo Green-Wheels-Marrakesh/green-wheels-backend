@@ -127,7 +127,68 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        try {
+            if ($user->person->update($request->all()) && $user->update($request->merge([
+                'name' => Str::snake($request->first_name . ' ' . $request->last_name),
+            ])->all())) {
+                $role = RoleEnum::from($request->role);
+                if ($dbRole = Role::findByName($role->value)) {
+                    $user->syncRoles($dbRole)->refresh();
+                } else {
+                    throw new Exception(Str::ucfirst(__('role not found. Maybe you need to seed the DB using `setup:roles` artisan command')));
+                }
+                if (RoleEnum::ADMIN()->equals($role)) {
+                    if ($user->employee) {
+                        $user->employee->delete();
+                        $admin = new Admin();
+                        $done = $admin->user()->associate($user) && $admin->save() && $user->refresh();
+                    } else {
+                        $admin = $user->admin;
+                        $done = $admin instanceof Admin && $admin->update($request->all());
+                    }
+                    if ($done) {
+                        $result = $admin;
+                        $msg = Str::ucfirst(__('user was successfully updated'));
+                        $status = 200;
+                    } else {
+                        $result = null;
+                        $msg = Str::ucfirst(__('user was not successfully updated'));
+                        $status = 500;
+                    }
+                } elseif (RoleEnum::EMPLOYEE()->equals($role)) {
+                    if ($user->admin) {
+                        $user->admin->delete();
+                        $employee = new Employee($request->all());
+                        $done = $employee->user()->associate($user) && $employee->save() && $user->refresh();
+                    } else {
+                        $employee = $user->employee;
+                        $done = $employee instanceof Employee && $employee->update($request->all());
+                    }
+                    if ($done) {
+                        $result = $employee;
+                        $msg = Str::ucfirst(__('user was successfully updated'));
+                        $status = 200;
+                    } else {
+                        $result = null;
+                        $msg = Str::ucfirst(__('user was not successfully updated'));
+                        $status = 500;
+                    }
+                } else {
+                    throw new Exception(Str::ucfirst(__('role not found')));
+                }
+            } else {
+                $result = null;
+                $msg = Str::ucfirst(__('user was not successfully updated'));
+                $status = 500;
+            }
+            return response()->json([
+                'result' => $result,
+                'msg' => $msg,
+                'status' => $status,
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
