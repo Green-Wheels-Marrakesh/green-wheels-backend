@@ -34,6 +34,6 @@ class SetupRoles extends Command
                 'name' => $role,
             ]);
         });
-        $this->info(__(Str::ucfirst('roles was successfully set up')));
+        $this->info(Str::ucfirst(__('roles was successfully set up')));
     }
 }
