@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
 {
@@ -30,7 +32,23 @@ class UserController extends Controller
                 } elseif (RoleEnum::EMPLOYEE()->equals($role)) {
                     $relation = 'employee';
                 }
-                $query->has($relation)->with($relation);;
+                $query->has($relation)->with($relation);
+            })
+            ->when($request->filter, function (Builder $query, array $filter) {
+                QueryBuilder::for($query)
+                    ->allowedFilters([
+                        AllowedFilter::callback('any', function (Builder $query, $value) {
+                            $query->whereRelation('person', 'first_name', 'like', "%$value%")
+                                ->orWhereRelation('person', 'last_name', 'like', "%$value%")
+                                ->orWhereRelation('person', 'cin', 'like', "%$value%")
+                                ->orWhereRelation('person', 'passport', 'like', "%$value%")
+                                ->orWhereRelation('person', 'phone', 'like', "%$value%")
+                                ->orWhereRelation('person', 'contact_email', 'like', "%$value%")
+                                ->orWhereRelation('person', 'city', 'like', "%$value%")
+                                ->orWhere('name', 'like', "%$value%")
+                                ->orWhere('email', 'like', "%$value%");
+                        }),
+                    ]);
             })
             ->get();
             return response()->json([
