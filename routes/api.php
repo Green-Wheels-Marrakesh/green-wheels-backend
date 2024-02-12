@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,5 +31,6 @@ Route::middleware([
      */
     Route::apiResources([
         'users' => UserController::class,
+        'clients' => ClientController::class,
     ]);
 });

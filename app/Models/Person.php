@@ -25,4 +25,7 @@ class Person extends Model
     function user() : HasOne {
         return $this->hasOne(User::class, 'person_id');
     }
+    function client() : HasOne {
+        return $this->hasOne(Client::class, 'person_id');
+    }
 }

@@ -24,6 +24,6 @@ class PersonFactory extends Factory
             'phone' => fake()->phoneNumber(),
             'contact_email' => fake()->companyEmail(),
             'city' => fake()->city(),
-        ];;
+        ];
     }
 }
