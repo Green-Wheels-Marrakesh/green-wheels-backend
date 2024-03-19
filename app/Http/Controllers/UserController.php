@@ -72,6 +72,7 @@ class UserController extends Controller
             ]) ->all());
             if ($person->save()) {
                 if ($user->person()->associate($person) && $user->save()) {
+                    $token = $user->createToken($user->email);
                     $role = RoleEnum::from($request->role);
                     if ($dbRole = Role::findByName($role->value)) {
                         $user->assignRole($dbRole)->refresh();
@@ -82,10 +83,12 @@ class UserController extends Controller
                         $admin = new Admin();
                         if ($admin->user()->associate($user) && $admin->save()) {
                             $result = $admin;
+                            $userToken = $token->plainTextToken;
                             $msg = Str::ucfirst(__('user was successfully added'));
                             $status = 200;
                         } else {
                             $result = null;
+                            $userToken = null;
                             $msg = Str::ucfirst(__('user was not successfully added'));
                             $status = 500;
                         }
@@ -93,10 +96,12 @@ class UserController extends Controller
                         $employee = new Employee($request->all());
                         if ($employee->user()->associate($user) && $employee->save()) {
                             $result = $employee;
+                            $userToken = $token->plainTextToken;
                             $msg = Str::ucfirst(__('user was successfully added'));
                             $status = 200;
                         } else {
                             $result = null;
+                            $userToken = null;
                             $msg = Str::ucfirst(__('user was not successfully added'));
                             $status = 500;
                         }
@@ -105,16 +110,19 @@ class UserController extends Controller
                     }
                 } else {
                     $result = null;
+                    $userToken = null;
                     $msg = Str::ucfirst(__('user was not successfully added'));
                     $status = 500;
                 }
             } else {
                 $result = null;
+                $userToken = null;
                 $msg = Str::ucfirst(__('user was not successfully added'));
                 $status = 500;
             }
             return response()->json([
                 'result' => $result,
+                'token' => $userToken,
                 'msg' => $msg,
                 'status' => $status,
             ]);
