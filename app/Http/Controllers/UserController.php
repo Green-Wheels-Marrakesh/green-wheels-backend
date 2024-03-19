@@ -34,23 +34,23 @@ class UserController extends Controller
                 }
                 $query->has($relation)->with($relation);
             })
-            ->when($request->filter, function (Builder $query, array $filter) {
-                QueryBuilder::for($query)
-                    ->allowedFilters([
-                        AllowedFilter::callback('any', function (Builder $query, $value) {
-                            $query->whereRelation('person', 'first_name', 'like', "%$value%")
-                                ->orWhereRelation('person', 'last_name', 'like', "%$value%")
-                                ->orWhereRelation('person', 'cin', 'like', "%$value%")
-                                ->orWhereRelation('person', 'passport', 'like', "%$value%")
-                                ->orWhereRelation('person', 'phone', 'like', "%$value%")
-                                ->orWhereRelation('person', 'contact_email', 'like', "%$value%")
-                                ->orWhereRelation('person', 'city', 'like', "%$value%")
-                                ->orWhere('name', 'like', "%$value%")
-                                ->orWhere('email', 'like', "%$value%");
-                        }),
-                    ]);
-            })
-            ->get();
+                ->when($request->filter, function (Builder $query, array $filter) {
+                    QueryBuilder::for($query)
+                        ->allowedFilters([
+                            AllowedFilter::callback('any', function (Builder $query, $value) {
+                                $query->whereRelation('person', 'first_name', 'like', "%$value%")
+                                    ->orWhereRelation('person', 'last_name', 'like', "%$value%")
+                                    ->orWhereRelation('person', 'cin', 'like', "%$value%")
+                                    ->orWhereRelation('person', 'passport', 'like', "%$value%")
+                                    ->orWhereRelation('person', 'phone', 'like', "%$value%")
+                                    ->orWhereRelation('person', 'contact_email', 'like', "%$value%")
+                                    ->orWhereRelation('person', 'city', 'like', "%$value%")
+                                    ->orWhere('name', 'like', "%$value%")
+                                    ->orWhere('email', 'like', "%$value%");
+                            }),
+                        ]);
+                })
+                ->get();
             return response()->json([
                 'result' => $users,
             ]);
@@ -69,7 +69,7 @@ class UserController extends Controller
             $user = new User($request->merge([
                 'password' => Hash::make('greenwheels@' . now()->year),
                 'name' => Str::snake($request->first_name . ' ' . $request->last_name),
-            ]) ->all());
+            ])->all());
             if ($user->person()->associate($person) && $user->save()) {
                 $token = $user->createToken($user->email);
                 $role = RoleEnum::from($request->role);
@@ -124,6 +124,9 @@ class UserController extends Controller
                 $role = RoleEnum::from($request->role);
                 if ($dbRole = Role::findByName($role->value)) {
                     $user->syncRoles($dbRole)->refresh();
+                    $result = $user->refresh();
+                    $msg = Str::ucfirst(__('user was successfully updated'));
+                    $status = 200;
                 } else {
                     throw new Exception(Str::ucfirst(__('role not found. Maybe you need to seed the DB using `setup:roles` artisan command')));
                 }
