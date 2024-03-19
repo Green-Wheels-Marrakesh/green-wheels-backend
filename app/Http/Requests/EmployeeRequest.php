@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class PersonRequest extends FormRequest
+class EmployeeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,34 +24,19 @@ class PersonRequest extends FormRequest
     public function rules(): array
     {
         $rules = collect([
-            'first_name' => [
+            'user' => [
                 'required',
-                'string',
+                'integer',
+                Rule::exists(User::class, 'id'),
             ],
-            'last_name' => [
+            'salary' => [
                 'required',
-                'string',
+                'numeric',
+                'digits_between:4,10',
             ],
-            'cin' => [
-                'sometimes',
-                'string',
-            ],
-            'passport' => [
-                'sometimes',
-                'string',
-            ],
-            'phone' => [
-                'sometimes',
-                'string',
-            ],
-            'contact_email' => [
-                'sometimes',
-                'string',
-                
-            ],
-            'city' => [
+            'start_date' => [
                 'required',
-                'string',
+                'date_format:Y-m-d',
             ],
         ]);
         return $rules->toArray();

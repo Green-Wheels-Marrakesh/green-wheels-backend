@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\RoleEnum;
+use App\Models\Person;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
@@ -28,7 +29,12 @@ class UserRequest extends PersonRequest
      */
     public function rules(): array
     {
-        $rules = [
+        $rules = collect([
+            'person' => [
+                'required',
+                'integer',
+                Rule::exists(Person::class, 'id'),
+            ],
             'email' => [
                 'required',
                 'email',
@@ -38,30 +44,20 @@ class UserRequest extends PersonRequest
                 'required',
                 new EnumRule(RoleEnum::class),
             ],
-            'salary' => [
-                Rule::requiredIf(fn () => RoleEnum::EMPLOYEE()->equals(RoleEnum::from($this->role))),
-                'numeric',
-                'digits_between:4,10',
-            ],
-            'start_date' => [
-                Rule::requiredIf(fn () => RoleEnum::EMPLOYEE()->equals(RoleEnum::from($this->role))),
-                'date_format:Y-m-d',
-            ],
-        ];
+        ]);
         if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PATCH) {
             $user = $this->route()->parameter('user');
-            Arr::add($rules, 'password', [
-                'sometimes',
-                'confirmed',
-                Password::defaults(),
+            $rules->merge([
+                'password' => [
+                    'sometimes',
+                    'confirmed',
+                    Password::defaults(),
+                ]
             ]);
             if ($user instanceof User) {
                 $rules['email'][2] = Rule::unique(User::class)->ignore($user);
             }
         }
-        $personRequestRules = parent::rules();
-        $userRequestRules = collect($rules);
-        $userRequestRules = $userRequestRules->merge($personRequestRules);
-        return $userRequestRules->toArray();
+        return $rules->toArray();
     }
 }
