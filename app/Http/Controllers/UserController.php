@@ -65,64 +65,28 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         try {
-            $person = new Person($request->all());
+            $person = Person::find($request->person);
             $user = new User($request->merge([
                 'password' => Hash::make('greenwheels@' . now()->year),
                 'name' => Str::snake($request->first_name . ' ' . $request->last_name),
             ]) ->all());
-            if ($person->save()) {
-                if ($user->person()->associate($person) && $user->save()) {
-                    $token = $user->createToken($user->email);
-                    $role = RoleEnum::from($request->role);
-                    if ($dbRole = Role::findByName($role->value)) {
-                        $user->assignRole($dbRole)->refresh();
-                    } else {
-                        throw new Exception(Str::ucfirst(__('role not found. Maybe you need to seed the DB using `setup:roles` artisan command')));
-                    }
-                    if (RoleEnum::ADMIN()->equals($role)) {
-                        $admin = new Admin();
-                        if ($admin->user()->associate($user) && $admin->save()) {
-                            $result = $admin;
-                            $userToken = $token->plainTextToken;
-                            $msg = Str::ucfirst(__('user was successfully added'));
-                            $status = 200;
-                        } else {
-                            $result = null;
-                            $userToken = null;
-                            $msg = Str::ucfirst(__('user was not successfully added'));
-                            $status = 500;
-                        }
-                    } elseif (RoleEnum::EMPLOYEE()->equals($role)) {
-                        $employee = new Employee($request->all());
-                        if ($employee->user()->associate($user) && $employee->save()) {
-                            $result = $employee;
-                            $userToken = $token->plainTextToken;
-                            $msg = Str::ucfirst(__('user was successfully added'));
-                            $status = 200;
-                        } else {
-                            $result = null;
-                            $userToken = null;
-                            $msg = Str::ucfirst(__('user was not successfully added'));
-                            $status = 500;
-                        }
-                    } else {
-                        throw new Exception(Str::ucfirst(__('role not found')));
-                    }
+            if ($user->person()->associate($person) && $user->save()) {
+                $token = $user->createToken($user->email);
+                $role = RoleEnum::from($request->role);
+                if ($dbRole = Role::findByName($role->value)) {
+                    $user->assignRole($dbRole)->refresh();
                 } else {
-                    $result = null;
-                    $userToken = null;
-                    $msg = Str::ucfirst(__('user was not successfully added'));
-                    $status = 500;
+                    throw new Exception(Str::ucfirst(__('role not found. Maybe you need to seed the DB using `setup:roles` artisan command')));
                 }
             } else {
                 $result = null;
-                $userToken = null;
+                $token = null;
                 $msg = Str::ucfirst(__('user was not successfully added'));
                 $status = 500;
             }
             return response()->json([
                 'result' => $result,
-                'token' => $userToken,
+                'token' => $token,
                 'msg' => $msg,
                 'status' => $status,
             ]);
@@ -151,10 +115,10 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
         try {
-            if ($user->person->update($request->all()) && $user->update($request->merge([
+            if ($user->update($request->merge([
                 'name' => Str::snake($request->first_name . ' ' . $request->last_name),
             ])->all())) {
                 $role = RoleEnum::from($request->role);
@@ -162,45 +126,6 @@ class UserController extends Controller
                     $user->syncRoles($dbRole)->refresh();
                 } else {
                     throw new Exception(Str::ucfirst(__('role not found. Maybe you need to seed the DB using `setup:roles` artisan command')));
-                }
-                if (RoleEnum::ADMIN()->equals($role)) {
-                    if ($user->employee) {
-                        $user->employee->delete();
-                        $admin = new Admin();
-                        $done = $admin->user()->associate($user) && $admin->save() && $user->refresh();
-                    } else {
-                        $admin = $user->admin;
-                        $done = $admin instanceof Admin && $admin->update($request->all());
-                    }
-                    if ($done) {
-                        $result = $admin;
-                        $msg = Str::ucfirst(__('user was successfully updated'));
-                        $status = 200;
-                    } else {
-                        $result = null;
-                        $msg = Str::ucfirst(__('user was not successfully updated'));
-                        $status = 500;
-                    }
-                } elseif (RoleEnum::EMPLOYEE()->equals($role)) {
-                    if ($user->admin) {
-                        $user->admin->delete();
-                        $employee = new Employee($request->all());
-                        $done = $employee->user()->associate($user) && $employee->save() && $user->refresh();
-                    } else {
-                        $employee = $user->employee;
-                        $done = $employee instanceof Employee && $employee->update($request->all());
-                    }
-                    if ($done) {
-                        $result = $employee;
-                        $msg = Str::ucfirst(__('user was successfully updated'));
-                        $status = 200;
-                    } else {
-                        $result = null;
-                        $msg = Str::ucfirst(__('user was not successfully updated'));
-                        $status = 500;
-                    }
-                } else {
-                    throw new Exception(Str::ucfirst(__('role not found')));
                 }
             } else {
                 $result = null;
