@@ -48,18 +48,12 @@ class ClientController extends Controller
     public function store(ClientRequest $request)
     {
         try {
-            $person = new Person($request->all());
+            $person = Person::find($request->person);
             $client = new Client();
-            if ($person->save()) {
-                if ($client->person()->associate($person) && $client->save()) {
-                    $result = $client;
-                    $msg = Str::ucfirst(__('client was successfully added'));
-                    $status = 200;
-                } else {
-                    $result = null;
-                    $msg = Str::ucfirst(__('client was not successfully added'));
-                    $status = 500;
-                }
+            if ($client->person()->associate($person) && $client->save()) {
+                $result = $client;
+                $msg = Str::ucfirst(__('client was successfully added'));
+                $status = 200;
             } else {
                 $result = null;
                 $msg = Str::ucfirst(__('client was not successfully added'));
@@ -95,7 +89,7 @@ class ClientController extends Controller
     public function update(ClientRequest $request, Client $client)
     {
         try {
-            if ($client->person->update($request->all())) {
+            if ($client->update($request->all())) {
                 $result = $client->refresh();
                 $msg = Str::ucfirst(__('client was successfully updated'));
                 $status = 200;

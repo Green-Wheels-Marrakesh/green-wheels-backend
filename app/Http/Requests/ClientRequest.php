@@ -22,10 +22,7 @@ class ClientRequest extends PersonRequest
      */
     public function rules(): array
     {
-        $rules = [];
-        $personRequestRules = parent::rules();
-        $clientRequestRules = collect($rules);
-        $clientRequestRules = $clientRequestRules->merge($personRequestRules);
-        return $clientRequestRules->toArray();
+        $rules = collect([]);
+        return $rules->toArray();
     }
 }
