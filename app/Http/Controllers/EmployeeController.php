@@ -44,7 +44,9 @@ class EmployeeController extends Controller
     {
         try {
             $user = User::find($request->user);
-            $employee = new Employee($request->all());
+            $employee = new Employee($request->except([
+                'user',
+            ]));
             if ($employee->user()->associate($user) && $employee->save()) {
                 $result = $employee;
                 $msg = Str::ucfirst(__('employee was successfully added'));
@@ -84,7 +86,9 @@ class EmployeeController extends Controller
     public function update(EmployeeRequest $request, Employee $employee)
     {
         try {
-            if ($employee->update($request->all())) {
+            if ($employee->update($request->except([
+                'user',
+            ]))) {
                 $result = $employee;
                 $msg = Str::ucfirst(__('employee was successfully updated'));
                 $status = 200;

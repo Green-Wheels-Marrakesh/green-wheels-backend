@@ -32,7 +32,9 @@ class AdminController extends Controller
     {
         try {
             $user = User::find($request->user);
-            $admin = new Admin($request->all());
+            $admin = new Admin($request->except([
+                'user',
+            ]));
             if ($admin->user()->associate($user) && $admin->save()) {
                 $result = $admin;
                 $msg = Str::ucfirst(__('admin was successfully added'));
@@ -72,7 +74,9 @@ class AdminController extends Controller
     public function update(AdminRequest $request, Admin $admin)
     {
         try {
-            if ($admin->update($request->all())) {
+            if ($admin->update($request->except([
+                'user',
+            ]))) {
                 $result = $admin;
                 $msg = Str::ucfirst(__('admin was successfully updated'));
                 $status = 200;

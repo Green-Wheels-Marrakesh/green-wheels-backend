@@ -55,7 +55,13 @@ class UserRequest extends PersonRequest
                 ]
             ]);
             if ($user instanceof User) {
-                $rules['email'][2] = Rule::unique(User::class)->ignore($user);
+                $rules = $rules->merge([
+                    'email' => [
+                        'required',
+                        'email',
+                        Rule::unique(User::class)->ignore($user),
+                    ],
+                ]);
             }
         }
         return $rules->toArray();
