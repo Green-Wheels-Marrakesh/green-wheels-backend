@@ -1,9 +1,15 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ArticleAttachmentController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\BikeController;
+use App\Http\Controllers\BikeVariantController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PersonController;
+use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +44,12 @@ Route::middleware([
         'admins' => AdminController::class,
         'employees' => EmployeeController::class,
         'clients' => ClientController::class,
+        'bikes' => BikeController::class,
+        'bikeVariants' => BikeVariantController::class,
+        'articles' => ArticleController::class,
+        'references' => ReferenceController::class,
+        'attachments' => AttachmentController::class,
+        'articleAttachments' => ArticleAttachmentController::class,
     ]);
 });
 require __DIR__.'/auth.php';
