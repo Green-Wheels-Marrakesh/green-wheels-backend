@@ -47,10 +47,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    protected $with = [
-        'person',
-    ];
-
     function person() : BelongsTo {
         return $this->belongsTo(Person::class, 'person_id');
     }
