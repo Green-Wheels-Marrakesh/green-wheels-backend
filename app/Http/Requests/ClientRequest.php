@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Person;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,7 +23,13 @@ class ClientRequest extends PersonRequest
      */
     public function rules(): array
     {
-        $rules = collect([]);
+        $rules = collect([
+            'person' => [
+                'required',
+                'integer',
+                Rule::exists(Person::class, 'id'),
+            ],
+        ]);
         return $rules->toArray();
     }
 }
