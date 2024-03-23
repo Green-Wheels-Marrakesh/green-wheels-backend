@@ -33,6 +33,9 @@ class ClientController extends Controller
                         }),
                     ]);
             })
+            ->with([
+                'person',
+            ])
             ->get();
             return response()->json([
                 'result' => $clients,
@@ -49,7 +52,9 @@ class ClientController extends Controller
     {
         try {
             $person = Person::find($request->person);
-            $client = new Client();
+            $client = new Client($request->except([
+                'person',
+            ]));
             if ($client->person()->associate($person) && $client->save()) {
                 $result = $client;
                 $msg = Str::ucfirst(__('client was successfully added'));
@@ -89,8 +94,12 @@ class ClientController extends Controller
     public function update(ClientRequest $request, Client $client)
     {
         try {
-            if ($client->update($request->all())) {
-                $result = $client->refresh();
+            if ($client->update($request->except([
+                'person',
+            ]))) {
+                $result = $client->refresh()->load([
+                    'person',
+                ]);
                 $msg = Str::ucfirst(__('client was successfully updated'));
                 $status = 200;
             } else {

@@ -11,10 +11,6 @@ class Client extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $with = [
-        'person',
-    ];
-
     function person() : BelongsTo {
         return $this->belongsTo(Person::class, 'person_id');
     }
