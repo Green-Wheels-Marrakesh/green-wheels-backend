@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Spatie\Enum\Laravel\Rules\EnumRule;
 
-class BikeRequest extends ArticleRequest
+class BikeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

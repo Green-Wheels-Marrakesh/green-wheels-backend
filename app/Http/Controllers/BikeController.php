@@ -3,15 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BikeRequest;
-use App\Models\Article;
-use App\Models\ArticleAttachment;
-use App\Models\Attachment;
 use App\Models\Bike;
-use App\Models\BikeVariant;
-use App\Models\Reference;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -36,8 +30,12 @@ class BikeController extends Controller
                                 ->orWhereRelation('bike_variants.article', 'default_selling_price', 'like', "%$value%")
                                 ->orWhereRelation('bike_variants.article', 'qty_notification_setting', 'like', "%$value%");
                         }),
+                        AllowedFilter::exact('bike_type')
                     ]);
             })
+            ->with([
+                'bike_variants.article.reference',
+            ])
             ->get();
             return response()->json([
                 'result' => $bikes,
