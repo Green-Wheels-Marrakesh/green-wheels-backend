@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Spatie\Enum\Laravel\Rules\EnumRule;
 
-class UserRequest extends PersonRequest
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Article;
 use App\Models\Reference;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
@@ -25,6 +26,11 @@ class ReferenceRequest extends FormRequest
     public function rules(): array
     {
         $rules = collect([
+            'article' => [
+                'required',
+                'numeric',
+                Rule::exists(Article::class, 'id'),
+            ],
             'original_reference' => [
                 'required',
                 'string',
@@ -38,6 +44,7 @@ class ReferenceRequest extends FormRequest
         ]);
         if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PUT) {
             $reference = $this->route()->parameter('reference');
+            $rules->pull('article');
             $rules->put('original_reference', [
                 'required',
                 'string',

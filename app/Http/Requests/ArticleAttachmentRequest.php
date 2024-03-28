@@ -27,12 +27,12 @@ class ArticleAttachmentRequest extends FormRequest
         $rules = [
             'attachment' => [
                 'required',
-                'number',
+                'numeric',
                 Rule::exists(Attachment::class, 'id'),
             ],
             'article' => [
                 'required',
-                'number',
+                'numeric',
                 Rule::exists(Article::class, 'id'),
             ],
         ];

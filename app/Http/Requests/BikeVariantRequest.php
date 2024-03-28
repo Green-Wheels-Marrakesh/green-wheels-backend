@@ -28,12 +28,12 @@ class BikeVariantRequest extends FormRequest
         $rules = collect([
             'bike' => [
                 'required',
-                'number',
+                'numeric',
                 Rule::exists(Bike::class, 'id'),
             ],
             'article' => [
                 'required',
-                'number',
+                'numeric',
                 Rule::exists(Article::class, 'id'),
             ],
             'bike_size' => [
@@ -41,6 +41,10 @@ class BikeVariantRequest extends FormRequest
                 'string',
             ],
         ]);
+        if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PUT) {
+            $rules->pull('bike');
+            $rules->pull('article');
+        }
         return $rules->toArray();
     }
 }

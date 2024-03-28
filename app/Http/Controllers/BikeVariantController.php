@@ -34,6 +34,9 @@ class BikeVariantController extends Controller
                         }),
                     ]);
             })
+            ->with([
+                'article.reference',
+            ])
             ->get();
             return response()->json([
                 'result' => $bikes,
