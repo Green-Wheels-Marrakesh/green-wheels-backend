@@ -20,6 +20,9 @@ class Article extends Model
     function bike_variant() : HasOne {
         return $this->hasOne(BikeVariant::class);
     }
+    function product_variant() : HasOne {
+        return $this->hasOne(ProductVariant::class);
+    }
     function reference() : HasOne {
         return $this->hasOne(Reference::class);
     }

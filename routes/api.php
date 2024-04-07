@@ -11,6 +11,8 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\PersonController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -50,6 +52,8 @@ Route::middleware([
         'bookings' => BookingController::class,
         'bikes' => BikeController::class,
         'bikeVariants' => BikeVariantController::class,
+        'products' => ProductController::class,
+        'productVariants' => ProductVariantController::class,
         'articles' => ArticleController::class,
         'references' => ReferenceController::class,
         'attachments' => AttachmentController::class,
