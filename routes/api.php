@@ -6,8 +6,10 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\BikeController;
 use App\Http\Controllers\BikeVariantController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\OperationController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\UserController;
@@ -44,6 +46,8 @@ Route::middleware([
         'admins' => AdminController::class,
         'employees' => EmployeeController::class,
         'clients' => ClientController::class,
+        'operations' => OperationController::class,
+        'bookings' => BookingController::class,
         'bikes' => BikeController::class,
         'bikeVariants' => BikeVariantController::class,
         'articles' => ArticleController::class,
