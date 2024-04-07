@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BikeVariantRequest;
+use App\Http\Requests\ProductVariantRequest;
 use App\Models\Article;
-use App\Models\Bike;
-use App\Models\BikeVariant;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class BikeVariantController extends Controller
+class ProductVariantController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,15 +20,15 @@ class BikeVariantController extends Controller
     public function index(Request $request)
     {
         try {
-            $bikes = BikeVariant::when($request->filter, function (Builder $query, array $filter) {
+            $products = ProductVariant::when($request->filter, function (Builder $query, array $filter) {
                 QueryBuilder::for($query)
                     ->allowedFilters([
                         AllowedFilter::callback('any', function (Builder $query, $value) {
-                            $query->where('bike_size', 'like', "%$value%")
-                                ->orWhereRelation('bike', 'bike_type', 'like', "%$value%")
-                                ->orWhereRelation('bike', 'bike_model', 'like', "%$value%")
-                                ->orWhereRelation('bike', 'bike_mark', 'like', "%$value%")
-                                ->orWhereRelation('bike', 'bike_status', 'like', "%$value%")
+                            $query->where('product_size', 'like', "%$value%")
+                                ->orWhereRelation('product', 'product_type', 'like', "%$value%")
+                                ->orWhereRelation('product', 'product_model', 'like', "%$value%")
+                                ->orWhereRelation('product', 'product_mark', 'like', "%$value%")
+                                ->orWhereRelation('product', 'product_status', 'like', "%$value%")
                                 ->orWhereRelation('article', 'default_selling_price', 'like', "%$value%")
                                 ->orWhereRelation('article', 'qty_notification_setting', 'like', "%$value%");
                         }),
@@ -39,7 +39,7 @@ class BikeVariantController extends Controller
             ])
             ->get();
             return response()->json([
-                'result' => $bikes,
+                'result' => $products,
             ]);
         } catch (\Throwable $th) {
             throw $th;
@@ -49,23 +49,23 @@ class BikeVariantController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(BikeVariantRequest $request)
+    public function store(ProductVariantRequest $request)
     {
         try {
             $article = Article::find($request->article);
-            $bike = Bike::find($request->bike);
-            $bikeVariant = new BikeVariant($request->all());
+            $product = Product::find($request->product);
+            $productVariant = new ProductVariant($request->all());
             if (
-                $bikeVariant->article()->associate($article) &&
-                $bikeVariant->bike()->associate($bike) &&
-                $bikeVariant->save()
+                $productVariant->article()->associate($article) &&
+                $productVariant->product()->associate($product) &&
+                $productVariant->save()
             ) {
-                $result = $bikeVariant;
-                $msg = Str::ucfirst(__('bike variant was successfully added'));
+                $result = $productVariant;
+                $msg = Str::ucfirst(__('product variant was successfully added'));
                 $status = 200;
             } else {
                 $result = null;
-                $msg = Str::ucfirst(__('bike variant was not successfully added'));
+                $msg = Str::ucfirst(__('product variant was not successfully added'));
                 $status = 500;
             }
             return response()->json([
@@ -81,11 +81,11 @@ class BikeVariantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(BikeVariant $bikeVariant)
+    public function show(ProductVariant $productVariant)
     {
         try {
             return response()->json([
-                'result' => $bikeVariant,
+                'result' => $productVariant,
             ]);
         } catch (\Throwable $th) {
             throw $th;
@@ -95,16 +95,16 @@ class BikeVariantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(BikeVariantRequest $request, BikeVariant $bikeVariant)
+    public function update(ProductVariantRequest $request, ProductVariant $productVariant)
     {
         try {
-            if ($bikeVariant->update($request->all())) {
-                $result = $bikeVariant->refresh();
-                $msg = Str::ucfirst(__('bike variant was successfully updated'));
+            if ($productVariant->update($request->all())) {
+                $result = $productVariant->refresh();
+                $msg = Str::ucfirst(__('product variant was successfully updated'));
                 $status = 200;
             } else {
                 $result = null;
-                $msg = Str::ucfirst(__('bike variant was not successfully updated'));
+                $msg = Str::ucfirst(__('product variant was not successfully updated'));
                 $status = 500;
             }
             return response()->json([
@@ -120,16 +120,16 @@ class BikeVariantController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(BikeVariant $bikeVariant)
+    public function destroy(ProductVariant $productVariant)
     {
         try {
-            if ($bikeVariant->delete()) {
-                $result = $bikeVariant;
-                $msg = Str::ucfirst(__('bike variant was successfully deleted'));
+            if ($productVariant->delete()) {
+                $result = $productVariant;
+                $msg = Str::ucfirst(__('product variant was successfully deleted'));
                 $status = 200;
             } else {
                 $result = null;
-                $msg = Str::ucfirst(__('bike variant was not successfully deleted'));
+                $msg = Str::ucfirst(__('product variant was not successfully deleted'));
                 $status = 500;
             }
             return response()->json([
