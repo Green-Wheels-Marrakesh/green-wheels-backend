@@ -20,4 +20,7 @@ class Operation extends Model
     function booking() : HasOne {
         return $this->hasOne(Booking::class);
     }
+    function selling() : HasOne {
+        return $this->hasOne(Selling::class);
+    }
 }
