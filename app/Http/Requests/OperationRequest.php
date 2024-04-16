@@ -27,7 +27,7 @@ class OperationRequest extends FormRequest
                 'date',
             ],
             'price_operation' => [
-                'required',
+                'sometimes',
                 'numeric',
                 'min:0',
             ],

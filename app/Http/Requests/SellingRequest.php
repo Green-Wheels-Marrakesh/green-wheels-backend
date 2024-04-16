@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests;
 
-use App\Models\BikeVariant;
 use App\Models\Client;
 use App\Models\Operation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class BookingRequest extends FormRequest
+class SellingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,27 +32,9 @@ class BookingRequest extends FormRequest
                 Rule::exists(Operation::class, 'id'),
             ],
             'client' => [
-                'required',
+                'sometimes',
                 'integer',
                 Rule::exists(Client::class, 'id'),
-            ],
-            'bike_variant' => [
-                'required',
-                'integer',
-                Rule::exists(BikeVariant::class, 'id'),
-            ],
-            'date_end' => [
-                'required',
-                'date',
-            ],
-            'child' => [
-                'required',
-                'boolean',
-            ],
-            'guaranty_price' => [
-                'sometimes',
-                'numeric',
-                'min:0',
             ],
         ]);
         if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PUT) {

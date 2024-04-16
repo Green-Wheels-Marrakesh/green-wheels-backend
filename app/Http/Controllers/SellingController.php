@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ArticleRequest;
-use App\Models\Article;
+use App\Http\Requests\SellingRequest;
+use App\Models\Client;
+use App\Models\Operation;
+use App\Models\Selling;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class ArticleController extends Controller
+class SellingController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,21 +20,22 @@ class ArticleController extends Controller
     public function index(Request $request)
     {
         try {
-            $articles = Article::when($request->filter, function (Builder $query, array $filter) {
+            $sellings = Selling::when($request->filter, function (Builder $query, array $filter) {
                 QueryBuilder::for($query)
                     ->allowedFilters([
                         AllowedFilter::callback('any', function (Builder $query, $value) {
-                            $query->Where('default_selling_price', 'like', "%$value%")
-                                ->orWhere('qty_notification_setting', 'like', "%$value%");
+                            $query;
                         }),
                     ]);
             })
             ->with([
-                'reference',
+                'operation',
+                'client.person',
+                'selling_details.article.reference',
             ])
             ->get();
             return response()->json([
-                'result' => $articles,
+                'result' => $sellings,
             ]);
         } catch (\Throwable $th) {
             throw $th;
@@ -42,17 +45,23 @@ class ArticleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ArticleRequest $request)
+    public function store(SellingRequest $request)
     {
         try {
-            $article = new Article($request->all());
-            if ($article->save()) {
-                $result = $article;
-                $msg = Str::ucfirst(__('article was successfully added'));
+            $operation = Operation::find($request->operation);
+            $client = Client::find($request->client);
+            $selling = new Selling($request->all());
+            if (
+                $selling->operation()->associate($operation) &&
+                $selling->client()->associate($client) &&
+                $selling->save()
+            ) {
+                $result = $selling;
+                $msg = Str::ucfirst(__('selling was successfully added'));
                 $status = 200;
             } else {
                 $result = null;
-                $msg = Str::ucfirst(__('article was not successfully added'));
+                $msg = Str::ucfirst(__('selling was not successfully added'));
                 $status = 500;
             }
             return response()->json([
@@ -68,11 +77,11 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Article $article)
+    public function show(Selling $selling)
     {
         try {
             return response()->json([
-                'result' => $article,
+                'result' => $selling,
             ]);
         } catch (\Throwable $th) {
             throw $th;
@@ -82,16 +91,20 @@ class ArticleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ArticleRequest $request, Article $article)
+    public function update(SellingRequest $request, Selling $selling)
     {
         try {
-            if ($article->update($request->all())) {
-                $result = $article;
-                $msg = Str::ucfirst(__('article was successfully updated'));
+            $client = Client::find($request->client);
+            if (
+                $selling->client()->associate($client) &&
+                $selling->update($request->all())
+            ) {
+                $result = $selling;
+                $msg = Str::ucfirst(__('selling was successfully updated'));
                 $status = 200;
             } else {
                 $result = null;
-                $msg = Str::ucfirst(__('article was not successfully updated'));
+                $msg = Str::ucfirst(__('selling was not successfully updated'));
                 $status = 500;
             }
             return response()->json([
@@ -107,16 +120,16 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Article $article)
+    public function destroy(Selling $selling)
     {
         try {
-            if ($article->delete()) {
-                $result = $article;
-                $msg = Str::ucfirst(__('article was successfully deleted'));
+            if ($selling->delete()) {
+                $result = $selling;
+                $msg = Str::ucfirst(__('selling was successfully deleted'));
                 $status = 200;
             } else {
                 $result = null;
-                $msg = Str::ucfirst(__('article was not successfully deleted'));
+                $msg = Str::ucfirst(__('selling was not successfully deleted'));
                 $status = 500;
             }
             return response()->json([
