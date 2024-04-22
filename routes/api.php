@@ -8,6 +8,7 @@ use App\Http\Controllers\BikeController;
 use App\Http\Controllers\BikeVariantController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\PersonController;
@@ -41,6 +42,54 @@ Route::middleware([
     /**
      * DEFINE CUSTOM ROUTES
      */
+    Route::group([
+        'prefix' => 'dashboard',
+    ], function () {
+        Route::group([
+            'prefix' => 'client',
+        ], function () {
+            Route::get('nb', [DashboardController::class, 'getNbClients']);
+        });
+        Route::group([
+            'prefix' => 'booking',
+        ], function () {
+            Route::get('nb', [DashboardController::class, 'getNbBookings']);
+            Route::get('price', [DashboardController::class, 'getTotalPriceBookings']);
+            Route::group([
+                'prefix' => 'chart',
+            ], function () {
+                Route::get('nb/{year}', [DashboardController::class, 'getNbBookingsByYear']);
+                Route::get('price/{year}', [DashboardController::class, 'getTotalPriceBookingsByYear']);
+            });
+        });
+        Route::group([
+            'prefix' => 'selling',
+        ], function () {
+            Route::get('price', [DashboardController::class, 'getTotalPriceSellings']);
+            Route::group([
+                'prefix' => 'chart',
+            ], function () {
+                Route::get('price/{year}', [DashboardController::class, 'getTotalPriceSellingsByYear']);
+            });
+        });
+        Route::group([
+            'prefix' => 'operation',
+        ], function () {
+            Route::get('last', [DashboardController::class, 'getLastOperations']);
+            Route::get('price', [DashboardController::class, 'getTotalPriceOperations']);
+            Route::group([
+                'prefix' => 'chart',
+            ], function () {
+                Route::get('price/{year}', [DashboardController::class, 'getTotalPriceOperationsByYear']);
+            });
+        });
+        Route::group([
+            'prefix' => 'bike',
+        ], function () {
+            Route::get('nb', [DashboardController::class, 'getNbBikes']);
+            Route::get('availability', [DashboardController::class, 'getBookings']);
+        });
+    });
     /**
      * DEFINE RESOURCES ROUTES
      */
