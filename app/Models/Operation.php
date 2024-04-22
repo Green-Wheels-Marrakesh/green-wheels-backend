@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -16,6 +17,16 @@ class Operation extends Model
         'price_operation',
         'advance_price_operation',
     ];
+    protected $appends = [
+        'operation_type',
+    ];
+
+    protected function operationType(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->booking()->exists() ? 'booking' : 'selling',
+        );
+    }
 
     function booking() : HasOne {
         return $this->hasOne(Booking::class);
