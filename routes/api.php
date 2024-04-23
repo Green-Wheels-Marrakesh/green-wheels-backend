@@ -81,6 +81,8 @@ Route::middleware([
                 'prefix' => 'chart',
             ], function () {
                 Route::get('price/{year}', [DashboardController::class, 'getTotalPriceOperationsByYear']);
+                Route::get('margin/{year}', [DashboardController::class, 'getTotalPriceMarginByYear']);
+                Route::get('expense/{year}', [DashboardController::class, 'getTotalExpensesByYear']);
             });
         });
         Route::group([
