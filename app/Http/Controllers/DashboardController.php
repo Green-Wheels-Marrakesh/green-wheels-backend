@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use App\Models\Bike;
 use App\Models\Booking;
 use App\Models\Client;
@@ -176,19 +177,35 @@ class DashboardController extends Controller
             'result' => $totalPriceOperations,
         ]);
     }
-    // function getTotalPriceMarginByYear(Request $request, int $year) : JsonResponse {
-    //     $totalPriceOperations = collect();
-    //     for ($i=1; $i <= 12; $i++) { 
-    //         $totalPriceOperations->put($i, $this->totalPrice($request->merge([
-    //             'month' => $i,
-    //             'year' => $year,
-    //             'type' => 'selling',
-    //         ]))  /*- here the total of buying ()*/);
-    //     }
-    //     return response()->json([
-    //         'result' => $totalPriceOperations,
-    //     ]);
-    // }
+
+    function getTotalExpensesByYear(Request $request, int $year) : JsonResponse {
+        $totalExpenses = collect();
+        for ($i=1; $i <= 12; $i++) { 
+            $totalExpenses->put($i, $this->totalExpenses($request->merge([
+                'month' => $i,
+                'year' => $year,
+            ])));
+        }
+        return response()->json([
+            'result' => $totalExpenses,
+        ]);
+    }
+
+    function getTotalPriceMarginByYear(Request $request, int $year) : JsonResponse {
+        $totalPriceMargins = collect();
+        for ($i=1; $i <= 12; $i++) { 
+            $totalPriceMargins->put($i, $this->totalPrice($request->merge([
+                'month' => $i,
+                'year' => $year,
+            ])) - $this->totalExpenses($request->merge([
+                'month' => $i,
+                'year' => $year,
+            ])));
+        }
+        return response()->json([
+            'result' => $totalPriceMargins,
+        ]);
+    }
 
     private function totalPrice(Request $request) : float {
         $totalPriceBookings = Operation::when($request->bike, function (Builder $query, int $bike) {
@@ -220,6 +237,16 @@ class DashboardController extends Controller
         })
         ->sum('price_operation');
         return $totalPriceBookings;
+    }
+    private function totalExpenses(Request $request) : float {
+        $totalExpenses = Article::when($request->month, function (Builder $query, int $month) {
+            $query->whereMonth('created_at', $month);
+        })
+        ->when($request->year, function (Builder $query, int $year) {
+            $query->whereYear('created_at', $year);
+        })
+        ->sum('buying_price');
+        return $totalExpenses;
     }
 
     private function nbBookings(Request $request) : int {
