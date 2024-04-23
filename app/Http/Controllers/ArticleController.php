@@ -23,6 +23,7 @@ class ArticleController extends Controller
                     ->allowedFilters([
                         AllowedFilter::callback('any', function (Builder $query, $value) {
                             $query->Where('default_selling_price', 'like', "%$value%")
+                                ->orWhere('buying_price', 'like', "%$value%")
                                 ->orWhere('qty_notification_setting', 'like', "%$value%");
                         }),
                     ]);
