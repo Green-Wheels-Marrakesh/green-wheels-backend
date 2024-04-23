@@ -14,6 +14,7 @@ class Article extends Model
 
     protected $fillable = [
         'default_selling_price',
+        'buying_price',
         'qty_notification_setting',
     ];
 

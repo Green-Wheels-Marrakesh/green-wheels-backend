@@ -27,6 +27,11 @@ class ArticleRequest extends FormRequest
                 'numeric',
                 'min:0',
             ],
+            'buying_price' => [
+                'sometimes',
+                'numeric',
+                'min:0',
+            ],
             'qty_notification_setting' => [
                 'sometimes',
                 'integer',
