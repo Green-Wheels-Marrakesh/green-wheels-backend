@@ -35,6 +35,7 @@ class BookingController extends Controller
                 'operation',
                 'client.person',
                 'bike_variant.article.reference',
+                'booking_additionals.product_variant.article.reference',
             ])
             ->get();
             return response()->json([
