@@ -6,6 +6,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\BikeController;
 use App\Http\Controllers\BikeVariantController;
+use App\Http\Controllers\BookingAdditionalController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
@@ -103,6 +104,7 @@ Route::middleware([
         'clients' => ClientController::class,
         'operations' => OperationController::class,
         'bookings' => BookingController::class,
+        'bookingAdditionals' => BookingAdditionalController::class,
         'sellings' => SellingController::class,
         'sellingDetails' => SellingDetailController::class,
         'bikes' => BikeController::class,
