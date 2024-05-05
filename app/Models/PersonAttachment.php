@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ArticleAttachment extends Model
+class PersonAttachment extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -15,8 +15,8 @@ class ArticleAttachment extends Model
         'id',
     ];
 
-    function article() : BelongsTo {
-        return $this->belongsTo(Article::class);
+    function person() : BelongsTo {
+        return $this->belongsTo(Person::class);
     }
     function attachment() : BelongsTo {
         return $this->belongsTo(Attachment::class);
