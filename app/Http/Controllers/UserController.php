@@ -113,7 +113,40 @@ class UserController extends Controller
                 'result' => $user->load([
                     'admin',
                     'employee',
+                    'person',
                 ]),
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function userByEmail(string $email)
+    {
+        try {
+            $user = User::where('email', $email)
+            ->with([
+                'person',
+                'admin',
+                'employee',
+            ])
+            ->first();
+            if ($user) {
+                $result = $user;
+                $msg = Str::ucfirst(__('user was successfully fetched'));
+                $status = 200;
+            } else {
+                $result = null;
+                $msg = Str::ucfirst(__('user was not successfully fetched'));
+                $status = 500;
+            }
+            return response()->json([
+                'result' => $result,
+                'msg' => $msg,
+                'status' => $status,
             ]);
         } catch (\Throwable $th) {
             throw $th;
@@ -126,22 +159,24 @@ class UserController extends Controller
     public function update(UserRequest $request, User $user)
     {
         try {
-            if ($user->update($request->merge([
+            if ($user->update($request->mergeIfMissing([
                 'name' => Str::snake($request->first_name . ' ' . $request->last_name),
             ])->all())) {
-                $role = RoleEnum::from($request->role);
-                if ($dbRole = Role::findByName($role->value, 'web')) {
-                    $user->syncRoles($dbRole)->refresh();
-                    $result = $user->load([
-                        'person',
-                        'admin',
-                        'employee',
-                    ]);
-                    $msg = Str::ucfirst(__('user was successfully updated'));
-                    $status = 200;
-                } else {
-                    throw new Exception(Str::ucfirst(__('role not found. Maybe you need to seed the DB using `setup:roles` artisan command')));
-                }
+                $request->whenFilled('role', function (string $role) use ($user) {
+                    $roleEnum = RoleEnum::from($role);
+                    if ($dbRole = Role::findByName($roleEnum->value, 'web')) {
+                        $user->syncRoles($dbRole)->refresh();
+                    } else {
+                        throw new Exception(Str::ucfirst(__('role not found. Maybe you need to seed the DB using `setup:roles` artisan command')));
+                    }
+                });
+                $result = $user->load([
+                    'person',
+                    'admin',
+                    'employee',
+                ]);
+                $msg = Str::ucfirst(__('user was successfully updated'));
+                $status = 200;
             } else {
                 $result = null;
                 $msg = Str::ucfirst(__('user was not successfully updated'));

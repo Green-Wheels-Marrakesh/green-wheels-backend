@@ -47,19 +47,26 @@ class UserRequest extends FormRequest
         ]);
         if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PATCH) {
             $user = $this->route()->parameter('user');
-            $rules->merge([
-                'password' => [
-                    'sometimes',
-                    'confirmed',
-                    Password::defaults(),
-                ]
-            ]);
             if ($user instanceof User) {
+                $rules->pull('person');
                 $rules = $rules->merge([
+                    'password' => [
+                        'sometimes',
+                        'confirmed',
+                        Password::defaults(),
+                    ],
                     'email' => [
                         'required',
                         'email',
                         Rule::unique(User::class)->ignore($user),
+                    ],
+                    'role' => [
+                        'sometimes',
+                        new EnumRule(RoleEnum::class),
+                    ],
+                    'name' => [
+                        'sometimes',
+                        'string',
                     ],
                 ]);
             }

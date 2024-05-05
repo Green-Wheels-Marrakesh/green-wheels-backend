@@ -18,4 +18,7 @@ class Attachment extends Model
     function article_attachment() : HasOne {
         return $this->hasOne(ArticleAttachment::class);
     }
+    function person_attachment() : HasOne {
+        return $this->hasOne(PersonAttachment::class);
+    }
 }

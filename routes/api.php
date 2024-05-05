@@ -12,6 +12,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OperationController;
+use App\Http\Controllers\PersonAttachmentController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariantController;
@@ -93,6 +94,7 @@ Route::middleware([
             Route::get('availability', [DashboardController::class, 'getBookings']);
         });
     });
+    Route::get('users/email/{email}', [UserController::class, 'userByEmail']);
     /**
      * DEFINE RESOURCES ROUTES
      */
@@ -115,6 +117,7 @@ Route::middleware([
         'references' => ReferenceController::class,
         'attachments' => AttachmentController::class,
         'articleAttachments' => ArticleAttachmentController::class,
+        'personAttachments' => PersonAttachmentController::class,
     ]);
 });
 require __DIR__.'/auth.php';
