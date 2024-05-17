@@ -81,7 +81,11 @@ class ClientController extends Controller
     {
         try {
             return response()->json([
-                'result' => $client,
+                'result' => $client->load([
+                    'person',
+                    'bookings.operation',
+                    'sellings.operation',
+                ]),
             ]);
         } catch (\Throwable $th) {
             throw $th;

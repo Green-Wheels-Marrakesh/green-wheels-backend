@@ -18,4 +18,7 @@ class Client extends Model
     function bookings() : HasMany {
         return $this->hasMany(Booking::class);
     }
+    function sellings() : HasMany {
+        return $this->hasMany(Selling::class);
+    }
 }
