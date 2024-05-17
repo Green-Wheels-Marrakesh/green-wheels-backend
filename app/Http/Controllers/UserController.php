@@ -114,6 +114,7 @@ class UserController extends Controller
                     'admin',
                     'employee',
                     'person',
+                    'roles',
                 ]),
             ]);
         } catch (\Throwable $th) {
