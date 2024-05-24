@@ -36,6 +36,8 @@ class BikeVariantController extends Controller
             })
             ->with([
                 'article.reference',
+                'bookings.operation',
+                'bookings.booking_additionals',
             ])
             ->get();
             return response()->json([
