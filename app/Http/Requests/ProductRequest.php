@@ -40,6 +40,11 @@ class ProductRequest extends FormRequest
                 'sometimes',
                 new EnumRule(ProductStatusEnum::class),
             ],
+            'qty_notification_setting' => [
+                'sometimes',
+                'integer',
+                'min:0',
+            ],
         ]);
         return $rules->toArray();
     }
