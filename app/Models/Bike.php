@@ -16,6 +16,7 @@ class Bike extends Model
         'bike_model',
         'bike_mark',
         'bike_status',
+        'qty_notification_setting',
     ];
 
     function bike_variants() : HasMany {

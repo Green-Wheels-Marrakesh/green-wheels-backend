@@ -27,14 +27,24 @@ class ArticleRequest extends FormRequest
                 'numeric',
                 'min:0',
             ],
-            'buying_price' => [
+            'default_booking_rental_price' => [
                 'sometimes',
                 'numeric',
                 'min:0',
             ],
-            'qty_notification_setting' => [
+            'default_booking_tour_price' => [
                 'sometimes',
-                'integer',
+                'numeric',
+                'min:0',
+            ],
+            'default_guaranty_price' => [
+                'sometimes',
+                'numeric',
+                'min:0',
+            ],
+            'buying_price' => [
+                'sometimes',
+                'numeric',
                 'min:0',
             ],
         ]);

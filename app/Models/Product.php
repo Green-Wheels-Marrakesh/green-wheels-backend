@@ -16,6 +16,7 @@ class Product extends Model
         'product_model',
         'product_mark',
         'product_status',
+        'qty_notification_setting',
     ];
 
     function product_variants() : HasMany {

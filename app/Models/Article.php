@@ -17,7 +17,9 @@ class Article extends Model
     protected $fillable = [
         'default_selling_price',
         'buying_price',
-        'qty_notification_setting',
+        'default_booking_rental_price',
+        'default_booking_tour_price',
+        'default_guaranty_price',
     ];
     protected $appends = [
         'attachment_url',

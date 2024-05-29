@@ -41,6 +41,11 @@ class BikeRequest extends FormRequest
                 'sometimes',
                 new EnumRule(BikeStatusEnum::class),
             ],
+            'qty_notification_setting' => [
+                'sometimes',
+                'integer',
+                'min:0',
+            ],
         ]);
         return $rules->toArray();
     }
