@@ -22,7 +22,7 @@ class BikeVariant extends Model
     function bike() : BelongsTo {
         return $this->belongsTo(Bike::class);
     }
-    function bookings() : HasMany {
-        return $this->hasMany(Booking::class);
+    function booking_details() : HasMany {
+        return $this->hasMany(BookingDetail::class);
     }
 }

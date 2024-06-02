@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests;
 
-use App\Models\BikeVariant;
-use App\Models\Client;
-use App\Models\Operation;
+use App\Enums\TourModeEnum;
+use App\Models\Booking;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Spatie\Enum\Laravel\Rules\EnumRule;
 
-class BookingRequest extends FormRequest
+class TourBookingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,43 +27,26 @@ class BookingRequest extends FormRequest
     public function rules(): array
     {
         $rules = collect([
-            'operation' => [
+            'booking' => [
                 'required',
                 'integer',
-                Rule::exists(Operation::class, 'id'),
+                Rule::exists(Booking::class, 'id'),
             ],
-            'client' => [
+            'tour_type' => [
+                'sometimes',
+                'string',
+            ],
+            'tour_mode' => [
                 'required',
-                'integer',
-                Rule::exists(Client::class, 'id'),
+                new EnumRule(TourModeEnum::class),
             ],
-            'date_end' => [
-                'required',
-                'date',
-            ],
-            'pick_up_date' => [
-                'sometimes',
-                'date',
-            ],
-            'pick_up_location' => [
-                'sometimes',
-                'string',
-            ],
-            'responsable' => [
-                'sometimes',
-                'string',
-            ],
-            'booking_payment_status' => [
-                'sometimes',
-                'string',
-            ],
-            'notes' => [
+            'guide' => [
                 'sometimes',
                 'string',
             ],
         ]);
         if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PUT) {
-            $rules->pull('operation');
+            $rules->pull('booking');
         }
         return $rules->toArray();
     }

@@ -8,6 +8,7 @@ use App\Http\Controllers\BikeController;
 use App\Http\Controllers\BikeVariantController;
 use App\Http\Controllers\BookingAdditionalController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\BookingDetailController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
@@ -17,8 +18,10 @@ use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\ReferenceController;
+use App\Http\Controllers\RentalBookingController;
 use App\Http\Controllers\SellingController;
 use App\Http\Controllers\SellingDetailController;
+use App\Http\Controllers\TourBookingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -107,6 +110,9 @@ Route::middleware([
         'operations' => OperationController::class,
         'bookings' => BookingController::class,
         'bookingAdditionals' => BookingAdditionalController::class,
+        'bookingDetails' => BookingDetailController::class,
+        'tourBookings' => TourBookingController::class,
+        'rentalBookings' => RentalBookingController::class,
         'sellings' => SellingController::class,
         'sellingDetails' => SellingDetailController::class,
         'bikes' => BikeController::class,
