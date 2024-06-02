@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BookingDetail extends Model
@@ -21,5 +22,8 @@ class BookingDetail extends Model
     }
     function booking() : BelongsTo {
         return $this->belongsTo(Booking::class);
+    }
+    function booking_damages() : HasMany {
+        return $this->hasMany(bookingDamage::class);
     }
 }
