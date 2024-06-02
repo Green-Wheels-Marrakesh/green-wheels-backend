@@ -111,7 +111,7 @@ class DashboardController extends Controller
 
     function getBookings(Request $request) : JsonResponse {
         $bookings = Booking::when($request->bike, function (Builder $query, int $bike) {
-            $query->where('bike_variant_id', $bike);
+            $query->whereRelation('booking_details', 'bike_variant_id', $bike);
         })
         ->when($request->month, function (Builder $query, int $month) {
             $query->whereHas('operation', function (Builder $query) use ($month) {
@@ -141,17 +141,19 @@ class DashboardController extends Controller
         ->with([
             'operation',
             'client.person',
-            'bike_variant.article.reference',
-            'bike_variant.bike',
+            'booking_details.bike_variant.article.reference',
+            'booking_details.bike_variant.bike',
         ])
         ->get()
         ->mapWithKeys(function (Booking $booking, int $key) {
-            return [$key => [
-                'title' => $booking->bike_variant->article->reference->generated_reference,
-                'start' => $booking->operation->date_operation,
-                'end' => $booking->date_end,
-                'booking_all_details' => $booking,
-            ]];
+            return [
+                $key => [
+                    'title' => $booking->client->person->first_name . ' | ' . $booking->client->person->cin,
+                    'start' => $booking->operation->date_operation,
+                    'end' => $booking->date_end,
+                    'booking_all_details' => $booking,
+                ],
+            ];
         });
         return response()->json([
             'result' => $bookings,
@@ -209,7 +211,7 @@ class DashboardController extends Controller
 
     private function totalPrice(Request $request) : float {
         $totalPriceBookings = Operation::when($request->bike, function (Builder $query, int $bike) {
-            $query->whereRelation('booking', 'bike_variant_id', $bike);
+            $query->whereRelation('booking.booking_details', 'bike_variant_id', $bike);
         })
         ->when($request->client, function (Builder $query, int $client) {
             $query->where(function (Builder $query) use ($client) {
@@ -251,7 +253,7 @@ class DashboardController extends Controller
 
     private function nbBookings(Request $request) : int {
         $nbBookings = Booking::when($request->bike, function (Builder $query, int $bike) {
-            $query->where('bike_variant_id', $bike);
+            $query->whereRelation('booking_details', 'bike_variant_id', $bike);
         })
         ->when($request->client, function (Builder $query, int $client) {
             $query->where('client_id', $client);
