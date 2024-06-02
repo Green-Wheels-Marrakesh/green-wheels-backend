@@ -91,7 +91,10 @@ class BookingController extends Controller
     {
         try {
             return response()->json([
-                'result' => $booking,
+                'result' => $booking->load([
+                    'client.person',
+                    'operation',
+                    ]),
             ]);
         } catch (\Throwable $th) {
             throw $th;
