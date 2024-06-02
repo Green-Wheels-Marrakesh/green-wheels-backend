@@ -43,6 +43,9 @@ class Booking extends Model
     function booking_details() : HasMany {
         return $this->hasMany(BookingDetail::class);
     }
+    function booking_charges() : HasMany {
+        return $this->hasMany(BookingCharge::class);
+    }
     function booking_additionals() : HasMany {
         return $this->hasMany(BookingAdditional::class);
     }

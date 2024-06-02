@@ -38,6 +38,7 @@ class BookingController extends Controller
                 'operation',
                 'rental_booking',
                 'tour_booking',
+                'booking_charges',
                 'client.person',
                 'booking_details.bike_variant.article.reference',
                 'booking_details.booking.operation',
