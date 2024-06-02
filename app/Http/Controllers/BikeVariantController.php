@@ -29,15 +29,18 @@ class BikeVariantController extends Controller
                                 ->orWhereRelation('bike', 'bike_model', 'like', "%$value%")
                                 ->orWhereRelation('bike', 'bike_mark', 'like', "%$value%")
                                 ->orWhereRelation('bike', 'bike_status', 'like', "%$value%")
+                                ->orWhereRelation('bike', 'qty_notification_setting', 'like', "%$value%")
                                 ->orWhereRelation('article', 'default_selling_price', 'like', "%$value%")
-                                ->orWhereRelation('article', 'qty_notification_setting', 'like', "%$value%");
+                                ->orWhereRelation('article', 'default_booking_tour_price', 'like', "%$value%")
+                                ->orWhereRelation('article', 'default_booking_rental_price', 'like', "%$value%")
+                                ->orWhereRelation('article', 'default_guaranty_price', 'like', "%$value%");
                         }),
                     ]);
             })
             ->with([
                 'article.reference',
-                'bookings.operation',
-                'bookings.booking_additionals',
+                'booking_details.booking.operation',
+                'booking_details.booking.booking_additionals',
             ])
             ->get();
             return response()->json([

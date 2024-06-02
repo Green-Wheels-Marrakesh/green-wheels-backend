@@ -26,15 +26,21 @@ class BookingController extends Controller
                     ->allowedFilters([
                         AllowedFilter::callback('any', function (Builder $query, $value) {
                             $query->Where('date_end', 'like', "%$value%")
-                                ->orWhere('child', 'like', "%$value%")
-                                ->orWhere('guaranty_price', 'like', "%$value%");
+                                ->orWhere('responsable', 'like', "%$value%")
+                                ->orWhere('pick_up_date', 'like', "%$value%")
+                                ->orWhere('pick_up_location', 'like', "%$value%")
+                                ->orWhere('booking_payment_status', 'like', "%$value%")
+                                ->orWhere('notes', 'like', "%$value%");
                         }),
                     ]);
             })
             ->with([
                 'operation',
+                'rental_booking',
+                'tour_booking',
                 'client.person',
-                'bike_variant.article.reference',
+                'booking_details.bike_variant.article.reference',
+                'booking_details.booking.operation',
                 'booking_additionals.product_variant.article.reference',
             ])
             ->get();
@@ -54,12 +60,10 @@ class BookingController extends Controller
         try {
             $operation = Operation::find($request->operation);
             $client = Client::find($request->client);
-            $bikeVariant = BikeVariant::find($request->bike_variant);
             $booking = new Booking($request->all());
             if (
                 $booking->operation()->associate($operation) &&
                 $booking->client()->associate($client) &&
-                $booking->bike_variant()->associate($bikeVariant) &&
                 $booking->save()
             ) {
                 $result = $booking;
@@ -101,13 +105,14 @@ class BookingController extends Controller
     {
         try {
             $client = Client::find($request->client);
-            $bikeVariant = BikeVariant::find($request->bike_variant);
             if (
                 $booking->client()->associate($client) &&
-                $booking->bike_variant()->associate($bikeVariant) &&
                 $booking->update($request->all())
             ) {
-                $result = $booking;
+                $result = $booking->load([
+                    'rental_booking',
+                    'tour_booking',
+                ]);
                 $msg = Str::ucfirst(__('booking was successfully updated'));
                 $status = 200;
             } else {

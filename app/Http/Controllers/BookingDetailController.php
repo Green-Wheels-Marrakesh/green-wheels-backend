@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BookingAdditionalRequest;
+use App\Http\Requests\BookingDetailRequest;
+use App\Models\BikeVariant;
 use App\Models\Booking;
-use App\Models\BookingAdditional;
-use App\Models\ProductVariant;
+use App\Models\BookingDetail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class BookingAdditionalController extends Controller
+class BookingDetailController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,29 +20,30 @@ class BookingAdditionalController extends Controller
     public function index(Request $request)
     {
         try {
-            $bookingAdditionals = BookingAdditional::when($request->filter, function (Builder $query, array $filter) {
+            $bookingDetails = BookingDetail::when($request->filter, function (Builder $query, array $filter) {
                 QueryBuilder::for($query)
                     ->allowedFilters([
                         AllowedFilter::callback('any', function (Builder $query, $value) {
-                            $query->where('price', 'like', "%$value%")
+                            $query->where('booking_price', 'like', "%$value%")
+                                ->orWhere('guaranty_price', 'like', "%$value%")
                                 ->orWhereRelation('booking.operation', 'date_operation', 'like', "%$value%")
                                 ->orWhereRelation('booking.operation', 'advance_price_operation', 'like', "%$value%")
-                                ->orWhereRelation('product_variant.article', 'default_selling_price', 'like', "%$value%")
-                                ->orWhereRelation('product_variant.article', 'default_booking_rental_price', 'like', "%$value%")
-                                ->orWhereRelation('product_variant.article', 'default_booking_tour_price', 'like', "%$value%")
-                                ->orWhereRelation('product_variant.article', 'default_guaranty_price', 'like', "%$value%")
-                                ->orWhereRelation('product_variant.article.reference', 'generated_reference', 'like', "%$value%");
+                                ->orWhereRelation('bike_variant.article', 'default_selling_price', 'like', "%$value%")
+                                ->orWhereRelation('bike_variant.article', 'default_booking_rental_price', 'like', "%$value%")
+                                ->orWhereRelation('bike_variant.article', 'default_booking_tour_price', 'like', "%$value%")
+                                ->orWhereRelation('bike_variant.article', 'default_guaranty_price', 'like', "%$value%")
+                                ->orWhereRelation('bike_variant.article.reference', 'generated_reference', 'like', "%$value%");
                         }),
                     ]);
             })
             ->with([
                 'booking.operation',
-                'product_variant.article.reference',
-                'product_variant.product',
+                'bike_variant.article.reference',
+                'bike_variant.bike',
             ])
             ->get();
             return response()->json([
-                'result' => $bookingAdditionals,
+                'result' => $bookingDetails,
             ]);
         } catch (\Throwable $th) {
             throw $th;
@@ -52,18 +53,18 @@ class BookingAdditionalController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(BookingAdditionalRequest $request)
+    public function store(BookingDetailRequest $request)
     {
         try {
-            $productVariant = ProductVariant::find($request->product_variant);
+            $bikeVariant = BikeVariant::find($request->bike_variant);
             $booking = Booking::find($request->booking);
-            $bookingAdditional = new BookingAdditional($request->all());
+            $bookingDetail = new BookingDetail($request->all());
             if (
-                $bookingAdditional->product_variant()->associate($productVariant) &&
-                $bookingAdditional->booking()->associate($booking) &&
-                $bookingAdditional->save()
+                $bookingDetail->bike_variant()->associate($bikeVariant) &&
+                $bookingDetail->booking()->associate($booking) &&
+                $bookingDetail->save()
             ) {
-                $result = $bookingAdditional;
+                $result = $bookingDetail;
                 $msg = Str::ucfirst(__('booking detail was successfully added'));
                 $status = 200;
             } else {
@@ -84,11 +85,11 @@ class BookingAdditionalController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(BookingAdditional $bookingAdditional)
+    public function show(BookingDetail $bookingDetail)
     {
         try {
             return response()->json([
-                'result' => $bookingAdditional,
+                'result' => $bookingDetail,
             ]);
         } catch (\Throwable $th) {
             throw $th;
@@ -98,15 +99,15 @@ class BookingAdditionalController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(BookingAdditionalRequest $request, BookingAdditional $bookingAdditional)
+    public function update(BookingDetailRequest $request, BookingDetail $bookingDetail)
     {
         try {
-            $productVariant = ProductVariant::find($request->product_variant);
+            $bikeVariant = BikeVariant::find($request->bike_variant);
             if (
-                $bookingAdditional->product_variant()->associate($productVariant) &&
-                $bookingAdditional->update($request->all())
+                $bookingDetail->bike_variant()->associate($bikeVariant) &&
+                $bookingDetail->update($request->all())
             ) {
-                $result = $bookingAdditional->refresh();
+                $result = $bookingDetail->refresh();
                 $msg = Str::ucfirst(__('booking detail was successfully updated'));
                 $status = 200;
             } else {
@@ -127,11 +128,11 @@ class BookingAdditionalController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(BookingAdditional $bookingAdditional)
+    public function destroy(BookingDetail $bookingDetail)
     {
         try {
-            if ($bookingAdditional->delete()) {
-                $result = $bookingAdditional;
+            if ($bookingDetail->delete()) {
+                $result = $bookingDetail;
                 $msg = Str::ucfirst(__('booking detail was successfully deleted'));
                 $status = 200;
             } else {
