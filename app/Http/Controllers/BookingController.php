@@ -42,6 +42,7 @@ class BookingController extends Controller
                 'client.person',
                 'booking_details.bike_variant.article.reference',
                 'booking_details.booking.operation',
+                'booking_details.booking_damages',
                 'booking_additionals.product_variant.article.reference',
             ])
             ->get();
