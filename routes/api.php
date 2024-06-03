@@ -22,6 +22,7 @@ use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\RentalBookingController;
 use App\Http\Controllers\SellingController;
 use App\Http\Controllers\SellingDetailController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TourBookingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -126,6 +127,7 @@ Route::middleware([
         'attachments' => AttachmentController::class,
         'articleAttachments' => ArticleAttachmentController::class,
         'personAttachments' => PersonAttachmentController::class,
+        'settings' => SettingController::class,
     ]);
 });
 require __DIR__.'/auth.php';
