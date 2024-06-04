@@ -96,6 +96,11 @@ class BookingController extends Controller
                 'result' => $booking->load([
                     'client.person',
                     'operation',
+                    'booking_additionals.product_variant.article.reference',
+                    'booking_charges',
+                    'booking_details.booking_damages',
+                    'booking_details.bike_variant.article.reference',
+                    'booking_details.bike_variant.bike',
                     ]),
             ]);
         } catch (\Throwable $th) {
