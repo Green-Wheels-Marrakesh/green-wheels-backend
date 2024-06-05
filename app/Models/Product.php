@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,7 +19,16 @@ class Product extends Model
         'product_status',
         'qty_notification_setting',
     ];
+    protected $appends = [
+        'in_stock',
+    ];
 
+    protected function inStock(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->product_variants()->count(),
+        );
+    }
     function product_variants() : HasMany {
         return $this->hasMany(ProductVariant::class);
     }
