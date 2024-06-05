@@ -129,7 +129,9 @@ class BikeVariantController extends Controller
     {
         try {
             if ($bikeVariant->delete()) {
-                $result = $bikeVariant;
+                $result = $bikeVariant->load([
+                    'bike',
+                ]);
                 $msg = Str::ucfirst(__('bike variant was successfully deleted'));
                 $status = 200;
             } else {

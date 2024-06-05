@@ -124,7 +124,9 @@ class ProductVariantController extends Controller
     {
         try {
             if ($productVariant->delete()) {
-                $result = $productVariant;
+                $result = $productVariant->load([
+                    'product',
+                ]);
                 $msg = Str::ucfirst(__('product variant was successfully deleted'));
                 $status = 200;
             } else {
