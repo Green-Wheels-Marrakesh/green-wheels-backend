@@ -10,6 +10,7 @@ use App\Http\Controllers\BookingAdditionalController;
 use App\Http\Controllers\BookingChargeController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\BookingDetailController;
+use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
@@ -128,6 +129,7 @@ Route::middleware([
         'articleAttachments' => ArticleAttachmentController::class,
         'personAttachments' => PersonAttachmentController::class,
         'settings' => SettingController::class,
+        'charges' => ChargeController::class,
     ]);
 });
 require __DIR__.'/auth.php';
