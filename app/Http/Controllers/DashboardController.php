@@ -26,7 +26,7 @@ class DashboardController extends Controller
             'result' => $nbBikes,
         ]);
     }
-    
+
     function getNbBookings(Request $request) : JsonResponse {
         $nbBookings = $this->nbBookings($request);
         return response()->json([
@@ -36,7 +36,7 @@ class DashboardController extends Controller
 
     function getNbBookingsByYear(Request $request, int $year) : JsonResponse {
         $nbBookings = collect();
-        for ($i=1; $i <= 12; $i++) { 
+        for ($i=1; $i <= 12; $i++) {
             $nbBookings->put($i, $this->nbBookings($request->merge([
                 'month' => $i,
                 'year' => $year,
@@ -58,7 +58,7 @@ class DashboardController extends Controller
 
     function getTotalPriceBookingsByYear(Request $request, int $year) : JsonResponse {
         $totalPriceBookings = collect();
-        for ($i=1; $i <= 12; $i++) { 
+        for ($i=1; $i <= 12; $i++) {
             $totalPriceBookings->put($i, $this->totalPrice($request->merge([
                 'month' => $i,
                 'year' => $year,
@@ -69,7 +69,7 @@ class DashboardController extends Controller
             'result' => $totalPriceBookings,
         ]);
     }
-    
+
     function getTotalPriceSellings(Request $request) : JsonResponse {
         $totalPriceSellings = $this->totalPrice($request->merge([
             'type' => 'selling',
@@ -81,7 +81,7 @@ class DashboardController extends Controller
 
     function getTotalPriceSellingsByYear(Request $request, int $year) : JsonResponse {
         $totalPriceSellings = collect();
-        for ($i=1; $i <= 12; $i++) { 
+        for ($i=1; $i <= 12; $i++) {
             $totalPriceSellings->put($i, $this->totalPrice($request->merge([
                 'month' => $i,
                 'year' => $year,
@@ -146,9 +146,28 @@ class DashboardController extends Controller
         ])
         ->get()
         ->mapWithKeys(function (Booking $booking, int $key) {
+            $title = $booking->client->person->first_name;
+
+            if (!empty($booking->tour_booking)) {
+                if (!empty($booking->tour_booking->guide)) {
+                    $title .= ' | ' . $booking->tour_booking->guide;
+                }
+                if (!empty($booking->tour_booking->tour_mode)) {
+                    $title .= ' | ' . $booking->tour_booking->tour_mode;
+                }
+            }
+
+            if (!empty($booking->pick_up_location)) {
+                $title .= ' | Pick Up Included';
+            }
+
+            if (!empty($booking->booking_payment_status)) {
+                $title .= ' | ' . $booking->booking_payment_status;
+            }
+
             return [
                 $key => [
-                    'title' => $booking->client->person->first_name . ' | ' . $booking->client->person->cin,
+                    'title' => $title,
                     'start' => $booking->operation->date_operation,
                     'end' => $booking->date_end,
                     'booking_all_details' => $booking,
@@ -169,7 +188,7 @@ class DashboardController extends Controller
 
     function getTotalPriceOperationsByYear(Request $request, int $year) : JsonResponse {
         $totalPriceOperations = collect();
-        for ($i=1; $i <= 12; $i++) { 
+        for ($i=1; $i <= 12; $i++) {
             $totalPriceOperations->put($i, $this->totalPrice($request->merge([
                 'month' => $i,
                 'year' => $year,
@@ -182,7 +201,7 @@ class DashboardController extends Controller
 
     function getTotalExpensesByYear(Request $request, int $year) : JsonResponse {
         $totalExpenses = collect();
-        for ($i=1; $i <= 12; $i++) { 
+        for ($i=1; $i <= 12; $i++) {
             $totalExpenses->put($i, $this->totalExpenses($request->merge([
                 'month' => $i,
                 'year' => $year,
@@ -195,7 +214,7 @@ class DashboardController extends Controller
 
     function getTotalPriceMarginByYear(Request $request, int $year) : JsonResponse {
         $totalPriceMargins = collect();
-        for ($i=1; $i <= 12; $i++) { 
+        for ($i=1; $i <= 12; $i++) {
             $totalPriceMargins->put($i, $this->totalPrice($request->merge([
                 'month' => $i,
                 'year' => $year,
