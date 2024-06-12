@@ -54,6 +54,8 @@ class UserController extends Controller
                 'person',
                 'admin',
                 'employee',
+                'roles.permissions',
+                'permissions',
             ])
             ->get();
             return response()->json([
@@ -80,6 +82,7 @@ class UserController extends Controller
                 $role = RoleEnum::from($request->role);
                 if ($dbRole = Role::findByName($role->value, 'web')) {
                     $user->assignRole($dbRole)->refresh();
+                    $user->syncPermissions($request->permissions);
                     $result = $user;
                     $msg = Str::ucfirst(__('user was successfully added'));
                     $status = 200;
@@ -171,6 +174,7 @@ class UserController extends Controller
                         throw new Exception(Str::ucfirst(__('role not found. Maybe you need to seed the DB using `setup:roles` artisan command')));
                     }
                 });
+                $user->syncPermissions($request->permissions);
                 $result = $user->load([
                     'person',
                     'admin',
