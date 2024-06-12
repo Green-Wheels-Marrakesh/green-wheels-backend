@@ -21,6 +21,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\RentalBookingController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SellingController;
 use App\Http\Controllers\SellingDetailController;
 use App\Http\Controllers\SettingController;
@@ -130,6 +131,7 @@ Route::middleware([
         'personAttachments' => PersonAttachmentController::class,
         'settings' => SettingController::class,
         'charges' => ChargeController::class,
+        'roles' => RoleController::class,
     ]);
 });
 require __DIR__.'/auth.php';

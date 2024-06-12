@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\PermissionsEnum;
 use App\Enums\RoleEnum;
 use App\Models\Person;
 use App\Models\User;
@@ -43,6 +44,13 @@ class UserRequest extends FormRequest
             'role' => [
                 'required',
                 new EnumRule(RoleEnum::class),
+            ],
+            'permissions' => [
+                'required',
+                'array',
+            ],
+            'permissions.*' => [
+                new EnumRule(PermissionsEnum::class),
             ],
         ]);
         if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PATCH) {
