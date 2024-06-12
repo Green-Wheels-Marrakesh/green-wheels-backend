@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Bike;
 use App\Models\Booking;
+use App\Models\BookingCharge;
+use App\Models\Charge;
 use App\Models\Client;
 use App\Models\Operation;
 use Illuminate\Database\Eloquent\Builder;
@@ -266,7 +268,21 @@ class DashboardController extends Controller
         ->when($request->year, function (Builder $query, int $year) {
             $query->whereYear('created_at', $year);
         })
-        ->sum('buying_price');
+        ->sum('buying_price')
+        + Charge::when($request->month, function (Builder $query, int $month) {
+            $query->whereMonth('charge_date', $month);
+        })
+        ->when($request->year, function (Builder $query, int $year) {
+            $query->whereYear('charge_date', $year);
+        })
+        ->sum('charge_price')
+        + BookingCharge::when($request->month, function (Builder $query, int $month) {
+            $query->whereMonth('charge_date', $month);
+        })
+        ->when($request->year, function (Builder $query, int $year) {
+            $query->whereYear('charge_date', $year);
+        })
+        ->sum('charge_price');
         return $totalExpenses;
     }
 
