@@ -64,7 +64,9 @@ class BookingDetailController extends Controller
                 $bookingDetail->booking()->associate($booking) &&
                 $bookingDetail->save()
             ) {
-                $result = $bookingDetail;
+                $result = $bookingDetail->load([
+                    'booking.operation',
+                ]);
                 $msg = Str::ucfirst(__('booking detail was successfully added'));
                 $status = 200;
             } else {
@@ -107,7 +109,9 @@ class BookingDetailController extends Controller
                 $bookingDetail->bike_variant()->associate($bikeVariant) &&
                 $bookingDetail->update($request->all())
             ) {
-                $result = $bookingDetail->refresh();
+                $result = $bookingDetail->refresh()->load([
+                    'booking.operation',
+                ]);
                 $msg = Str::ucfirst(__('booking detail was successfully updated'));
                 $status = 200;
             } else {
@@ -132,7 +136,9 @@ class BookingDetailController extends Controller
     {
         try {
             if ($bookingDetail->delete()) {
-                $result = $bookingDetail;
+                $result = $bookingDetail->load([
+                    'booking.operation',
+                ]);
                 $msg = Str::ucfirst(__('booking detail was successfully deleted'));
                 $status = 200;
             } else {

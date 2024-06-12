@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 
 class OperationRequest extends FormRequest
 {
@@ -37,6 +38,12 @@ class OperationRequest extends FormRequest
                 'min:0',
             ],
         ]);
+        if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PUT) {
+            $rules->put('date_operation', [
+                'sometimes',
+                'date',
+            ]);
+        }
         return $rules->toArray();
     }
 }
