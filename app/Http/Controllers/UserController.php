@@ -136,6 +136,8 @@ class UserController extends Controller
                 'person',
                 'admin',
                 'employee',
+                'roles.permissions',
+                'permissions',
             ])
             ->first();
             if ($user) {

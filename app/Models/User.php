@@ -3,6 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\RoleEnum;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -47,6 +50,16 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $appends = [
+        'user_role',
+    ];
+
+    protected function userRole(): Attribute
+    {
+        return new Attribute(
+            get: fn() => $this->admin()->exists() ? RoleEnum::ADMIN() : RoleEnum::EMPLOYEE(),
+        );
+    }
     function person() : BelongsTo {
         return $this->belongsTo(Person::class, 'person_id');
     }
