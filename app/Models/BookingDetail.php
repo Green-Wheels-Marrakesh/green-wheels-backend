@@ -24,6 +24,6 @@ class BookingDetail extends Model
         return $this->belongsTo(Booking::class);
     }
     function booking_damages() : HasMany {
-        return $this->hasMany(bookingDamage::class);
+        return $this->hasMany(BookingDamage::class);
     }
 }
