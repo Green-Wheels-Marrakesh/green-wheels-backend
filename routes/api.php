@@ -9,6 +9,7 @@ use App\Http\Controllers\BikeVariantController;
 use App\Http\Controllers\BookingAdditionalController;
 use App\Http\Controllers\BookingChargeController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\BookingDamageController;
 use App\Http\Controllers\BookingDetailController;
 use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ClientController;
@@ -115,6 +116,7 @@ Route::middleware([
         'bookings' => BookingController::class,
         'bookingAdditionals' => BookingAdditionalController::class,
         'bookingCharges' => BookingChargeController::class,
+        'bookingDamages' => BookingDamageController::class,
         'bookingDetails' => BookingDetailController::class,
         'tourBookings' => TourBookingController::class,
         'rentalBookings' => RentalBookingController::class,

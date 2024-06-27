@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\bookingDamageRequest;
-use App\Models\bookingDamage;
+use App\Http\Requests\BookingDamageRequest;
+use App\Models\BookingDamage;
 use App\Models\BookingDetail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -19,7 +19,7 @@ class BookingDamageController extends Controller
     public function index(Request $request)
     {
         try {
-            $bookingDamages = bookingDamage::when($request->filter, function (Builder $query, array $filter) {
+            $bookingDamages = BookingDamage::when($request->filter, function (Builder $query, array $filter) {
                 QueryBuilder::for($query)
                     ->allowedFilters([
                         AllowedFilter::callback('any', function (Builder $query, $value) {
@@ -40,6 +40,7 @@ class BookingDamageController extends Controller
             })
             ->with([
                 'booking_detail.booking.operation',
+                'booking_detail.booking.booking_details.bike_variant.article.reference',
                 'booking_detail.bike_variant.article.reference',
                 'booking_detail.bike_variant.bike',
             ])
@@ -55,7 +56,7 @@ class BookingDamageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(bookingDamageRequest $request)
+    public function store(BookingDamageRequest $request)
     {
         try {
             $bookingDetail = BookingDetail::find($request->booking_detail);
@@ -85,7 +86,7 @@ class BookingDamageController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(bookingDamage $bookingDamage)
+    public function show(BookingDamage $bookingDamage)
     {
         try {
             return response()->json([
@@ -99,10 +100,14 @@ class BookingDamageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(bookingDamageRequest $request, bookingDamage $bookingDamage)
+    public function update(bookingDamageRequest $request, BookingDamage $bookingDamage)
     {
         try {
-            if ($bookingDamage->update($request->all())) {
+            $bookingDetail = BookingDetail::find($request->booking_detail);
+            if (
+                $bookingDamage->booking_detail()->associate($bookingDetail) &&
+                $bookingDamage->update($request->all())
+            ) {
                 $result = $bookingDamage->refresh();
                 $msg = Str::ucfirst(__('booking damage was successfully updated'));
                 $status = 200;
@@ -124,7 +129,7 @@ class BookingDamageController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(bookingDamage $bookingDamage)
+    public function destroy(BookingDamage $bookingDamage)
     {
         try {
             if ($bookingDamage->delete()) {

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class bookingDamage extends Model
+class BookingDamage extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -16,6 +16,9 @@ class bookingDamage extends Model
         'damage_date',
         'damage_estimated_price',
         'damage_description',
+    ];
+    protected $casts = [
+        'damage_date' => 'datetime:Y-m-d',
     ];
 
     function booking_detail() : BelongsTo {

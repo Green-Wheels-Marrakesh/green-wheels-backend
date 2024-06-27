@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class bookingDamageRequest extends FormRequest
+class BookingDamageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -48,9 +48,6 @@ class bookingDamageRequest extends FormRequest
                 'string',
             ],
         ]);
-        if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PUT) {
-            $rules->pull('booking_detail');
-        }
         return $rules->toArray();
     }
 }
