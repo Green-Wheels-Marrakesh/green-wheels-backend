@@ -14,4 +14,9 @@ class Setting extends Model
         'setting_key',
         'setting_value',
     ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'setting_key';
+    }
 }
