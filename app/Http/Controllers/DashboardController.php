@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SettingEnum;
 use App\Models\Article;
 use App\Models\Bike;
 use App\Models\Booking;
@@ -9,9 +10,13 @@ use App\Models\BookingCharge;
 use App\Models\Charge;
 use App\Models\Client;
 use App\Models\Operation;
+use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class DashboardController extends Controller
 {
@@ -149,7 +154,6 @@ class DashboardController extends Controller
         ->get()
         ->mapWithKeys(function (Booking $booking, int $key) {
             $title = $booking->client->person->first_name;
-
             if (!empty($booking->tour_booking)) {
                 if (!empty($booking->tour_booking->guide)) {
                     $title .= ' | ' . $booking->tour_booking->guide;
@@ -158,22 +162,30 @@ class DashboardController extends Controller
                     $title .= ' | ' . $booking->tour_booking->tour_mode;
                 }
             }
-
             if (!empty($booking->pick_up_location)) {
                 $title .= ' | Pick Up Included';
             }
-
             if (!empty($booking->booking_payment_status)) {
                 $title .= ' | ' . $booking->booking_payment_status;
             }
-
+            $startDate = $booking->operation->date_operation;
+            $startTime = Carbon::parse($startDate)->toTimeString();
+            $colorSetting = collect(Json::decode(Setting::where('setting_key', SettingEnum::BOOKING_CALENDAR_COLORS())->value('setting_value')))
+            ->first(function (array $setting, string $key) use ($startTime) {
+                return $setting['start_time'] <= $startTime && $setting['end_time'] >= $startTime;
+            });
+            $dataEvent = [
+                'title' => $title,
+                'start' => $startDate,
+                'end' => $booking->date_end,
+                'booking_all_details' => $booking,
+            ];
+            if ($colorSetting) {
+                $color = $colorSetting['color'];
+                Arr::set($dataEvent, 'color', $color);
+            }
             return [
-                $key => [
-                    'title' => $title,
-                    'start' => $booking->operation->date_operation,
-                    'end' => $booking->date_end,
-                    'booking_all_details' => $booking,
-                ],
+                $key => $dataEvent,
             ];
         });
         return response()->json([
