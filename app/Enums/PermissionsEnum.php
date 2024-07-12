@@ -6,6 +6,15 @@ use Spatie\Enum\Laravel\Enum;
 
 /**
  * @method static self DASHBOARD_INTERFACE()
+ * @method static self SHOW_NB_CLIENTS()
+ * @method static self SHOW_NB_BIKES()
+ * @method static self SHOW_NB_USERS()
+ * @method static self SHOW_NB_BOOKINGS()
+ * @method static self SHOW_BOOKINGS_CALENDAR()
+ * @method static self SHOW_LAST_OPERATIONS()
+ * @method static self SHOW_NB_BOOKINGS_CHART()
+ * @method static self SHOW_EARNING_BOOKINGS_CHART()
+ * @method static self SHOW_GAINS_EXPENSES_CHART()
  * @method static self USER_INTERFACE()
  * @method static self CLIENT_INTERFACE()
  * @method static self BOOKING_INTERFACE()

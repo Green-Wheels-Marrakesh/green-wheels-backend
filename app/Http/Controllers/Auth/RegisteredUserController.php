@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
@@ -38,7 +39,7 @@ class RegisteredUserController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
-            $person->save() && $user->person()->associate($person)->save() && ($token = $user->createToken($user->email)) && $user->assignRole(Role::findByName(RoleEnum::ADMIN())) && $user->admin()->save(new Admin());
+            $person->save() && $user->person()->associate($person)->save() && ($token = $user->createToken($user->email)) && $user->assignRole(Role::findByName(RoleEnum::ADMIN()))->syncPermissions(Permission::all()) && $user->admin()->save(new Admin());
     
             event(new Registered($user));
     
