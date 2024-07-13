@@ -148,8 +148,13 @@ class DashboardController extends Controller
         ->with([
             'operation',
             'client.person',
+            'rental_booking',
+            'tour_booking',
+            'booking_charges',
             'booking_details.bike_variant.article.reference',
             'booking_details.bike_variant.bike',
+            'booking_additionals.product_variant.article.reference',
+            'booking_additionals.product_variant.product',
         ])
         ->get()
         ->mapWithKeys(function (Booking $booking, int $key) {
