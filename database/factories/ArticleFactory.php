@@ -18,7 +18,10 @@ class ArticleFactory extends Factory
     {
         return  [
             'default_selling_price' => fake()->randomFloat(2),
-            'qty_notification_setting' => fake()->numberBetween(3, 6),
+            'buying_price' => fake()->randomFloat(2),
+            'default_booking_rental_price' => fake()->randomFloat(2),
+            'default_booking_tour_price' => fake()->randomFloat(2),
+            'default_guaranty_price' => fake()->randomFloat(2),
         ];
     }
 }

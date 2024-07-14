@@ -35,6 +35,7 @@ class BikeFactory extends Factory
             'bike_model' => fake()->numerify($selectedBikeType . '-####'),
             'bike_mark' => fake()->randomElement($bikeMarks->toArray()),
             'bike_status' => fake()->randomElement(BikeStatusEnum::toValues()),
+            'qty_notification_setting' => fake()->numberBetween(3, 6),
         ];
     }
 }
