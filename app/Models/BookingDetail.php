@@ -15,6 +15,7 @@ class BookingDetail extends Model
     protected $fillable = [
         'booking_price',
         'guaranty_price',
+        'for_child',
     ];
 
     function bike_variant() : BelongsTo {

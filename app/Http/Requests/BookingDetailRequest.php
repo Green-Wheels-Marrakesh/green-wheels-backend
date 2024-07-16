@@ -46,6 +46,10 @@ class BookingDetailRequest extends FormRequest
                 'numeric',
                 'min:0',
             ],
+            'for_child' => [
+                'sometimes',
+                'boolean',
+            ],
         ]);
         if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PUT) {
             $rules->pull('booking');

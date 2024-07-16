@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ClientSeeder::class,
             GlobalStockNotifSeeder::class,
+            ChildrenDiscountSeeder::class,
             BookingCalendarColorsSeeder::class,
         ]);
     }
