@@ -145,6 +145,12 @@ class DashboardController extends Controller
                 $query->whereDate('date_operation', '<=', $toDate);
             });
         })
+        ->when($request->responsable, function (Builder $query, string $responsable) {
+            $query->where('responsable', $responsable);
+        })
+        ->when($request->payment_status, function (Builder $query, string $paymentStatus) {
+            $query->where('booking_payment_status', $paymentStatus);
+        })
         ->with([
             'operation',
             'client.person',
