@@ -167,7 +167,7 @@ class DashboardController extends Controller
             $title = $booking->client->person->first_name;
             if (!empty($booking->tour_booking)) {
                 if (!empty($booking->tour_booking->guide)) {
-                    $title .= ' | ' . $booking->tour_booking->guide;
+                    $title .= ' | ' . Arr::join($booking->tour_booking->guide, ', ');
                 }
                 if (!empty($booking->tour_booking->tour_mode)) {
                     $title .= ' | ' . $booking->tour_booking->tour_mode;
