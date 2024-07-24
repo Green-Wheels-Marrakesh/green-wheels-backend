@@ -19,6 +19,7 @@ class Booking extends Model
     protected $fillable = [
         'date_end',
         'responsable',
+        'partner',
         'pick_up_date',
         'pick_up_location',
         'booking_payment_status',

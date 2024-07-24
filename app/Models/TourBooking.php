@@ -15,6 +15,11 @@ class TourBooking extends Model
         'tour_type',
         'tour_mode',
         'guide',
+        'guide_assistant',
+    ];
+    protected $casts = [
+        'guide' => 'array',
+        'guide_assistant' => 'array',
     ];
 
     function booking() : BelongsTo {

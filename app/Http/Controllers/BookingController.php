@@ -92,7 +92,6 @@ class BookingController extends Controller
     public function show(Booking $booking)
     {
         try {
-            $booking->load('operation', 'client.person', 'bike_variant');
             return response()->json([
                 'result' => $booking->load([
                     'client.person',

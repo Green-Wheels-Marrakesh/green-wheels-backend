@@ -53,6 +53,10 @@ class BookingRequest extends FormRequest
                 'sometimes',
                 'string',
             ],
+            'partner' => [
+                'sometimes',
+                'string',
+            ],
             'booking_payment_status' => [
                 'sometimes',
                 'string',

@@ -16,6 +16,6 @@ class Charge extends Model
         'charge_description',
     ];
     protected $casts = [
-        'charge_date' => 'datetime:d-m-Y',
+        'charge_date' => 'datetime:Y-m-d',
     ];
 }

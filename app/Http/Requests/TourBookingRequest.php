@@ -42,7 +42,11 @@ class TourBookingRequest extends FormRequest
             ],
             'guide' => [
                 'sometimes',
-                'string',
+                'array',
+            ],
+            'guide_assistant' => [
+                'sometimes',
+                'array',
             ],
         ]);
         if ($this->method() == Request::METHOD_PUT || $this->method() == Request::METHOD_PUT) {
